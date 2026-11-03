@@ -44,7 +44,7 @@ function AuthPage() {
       name: (fd.get("name") as string) || undefined,
     });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0].message);
+      toast.error(parsed.error.issues[0]?.message);
       return;
     }
     setLoading(true);
@@ -56,13 +56,13 @@ function AuthPage() {
         options: { emailRedirectTo: window.location.origin, data: { display_name: name } },
       });
       setLoading(false);
-      if (error) return toast.error(error.message);
-      if (data.session) navigate({ to: "/report/new" });
+      if (error) return void toast.error(error.message);
+      if (data.session) void navigate({ to: "/report/new" });
       else setSent(true);
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       setLoading(false);
-      if (error) return toast.error(error.message);
+      if (error) return void toast.error(error.message);
       navigate({ to: "/report/new" });
     }
   }

@@ -41,7 +41,7 @@ function NewReport() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!photo) return setPreview(null);
+    if (!photo) { setPreview(null); return; }
     const url = URL.createObjectURL(photo);
     setPreview(url);
     return () => URL.revokeObjectURL(url);
@@ -58,7 +58,7 @@ function NewReport() {
   }, [pos]);
 
   function useMyLocation() {
-    if (!navigator.geolocation) return toast.error("Location isn't available on this device");
+    if (!navigator.geolocation) return void toast.error("Location isn't available on this device");
     navigator.geolocation.getCurrentPosition(
       (p) => {
         const here = { lat: p.coords.latitude, lng: p.coords.longitude };
@@ -72,8 +72,8 @@ function NewReport() {
 
   function onPhoto(file: File | undefined) {
     if (!file) return;
-    if (!file.type.startsWith("image/")) return toast.error("Please choose an image file");
-    if (file.size > MAX_PHOTO_BYTES) return toast.error("Photo must be under 5 MB");
+    if (!file.type.startsWith("image/")) return void toast.error("Please choose an image file");
+    if (file.size > MAX_PHOTO_BYTES) return void toast.error("Photo must be under 5 MB");
     setPhoto(file);
   }
 
@@ -88,8 +88,8 @@ function NewReport() {
       longitude: pos?.lng,
       address: address || undefined,
     });
-    if (!parsed.success) return toast.error(parsed.error.issues[0].message);
-    if (!photo) return toast.error("Please add a photo of the issue");
+    if (!parsed.success) return void toast.error(parsed.error.issues[0]?.message);
+    if (!photo) return void toast.error("Please add a photo of the issue");
 
     setSubmitting(true);
     try {
@@ -97,7 +97,7 @@ function NewReport() {
       const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("report-photos").upload(path, photo, { contentType: photo.type });
       if (upErr) throw upErr;
-      const { error } = await supabase.from("reports").insert({ ...parsed.data, user_id: user.id, photo_url: path });
+      const { error } = await supabase.from("reports").insert({ ...parsed.data, address: parsed.data.address ?? null, user_id: user.id, photo_url: path });
       if (error) throw error;
       toast.success("Thanks! Your report has been submitted.");
       navigate({ to: "/" });
