@@ -20,7 +20,7 @@ export const Route = createFileRoute("/_authenticated/my-reports")({
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(myReportsQuery(context.user.id)),
   component: MyReports,
-  errorComponent: ({ error }) => <div role="alert" className="p-8">{error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-8">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-8">Not found.</div>,
 });
 

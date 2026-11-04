@@ -23,7 +23,7 @@ export const Route = createFileRoute("/reports/$id")({
     if (!r) throw notFound();
   },
   component: ReportDetail,
-  errorComponent: ({ error }) => <div role="alert" className="p-8">{error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-8">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => (
     <div className="p-8">Report not found. <Link to="/map" className="text-primary underline">Back to map</Link></div>
   ),

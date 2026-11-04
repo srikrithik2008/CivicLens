@@ -20,7 +20,7 @@ export const Route = createFileRoute("/map")({
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(allReportsQuery()),
   component: MapPage,
-  errorComponent: ({ error }) => <div role="alert" className="p-8">{error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-8">{error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-8">Not found.</div>,
 });
 
