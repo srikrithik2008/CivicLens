@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { MapPin } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionUser } from "@/hooks/use-session";
@@ -7,6 +8,11 @@ import { useSessionUser } from "@/hooks/use-session";
 export function SiteHeader() {
   const { user, ready } = useSessionUser();
   const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    if (!user) return setIsAdmin(false);
+    supabase.rpc("has_role", { _user_id: user.id, _role: "admin" }).then(({ data }) => setIsAdmin(!!data));
+  }, [user]);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -31,6 +37,11 @@ export function SiteHeader() {
               <Button asChild variant="ghost" size="sm">
                 <Link to="/my-reports">My Reports</Link>
               </Button>
+              {isAdmin && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/admin">Admin</Link>
+                </Button>
+              )}
               <Button asChild size="sm" className="hidden sm:inline-flex">
                 <Link to="/report/new">Report an issue</Link>
               </Button>
