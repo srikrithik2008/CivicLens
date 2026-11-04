@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/report/new")({
   component: NewReport,
 });
 
-const DEFAULT_CENTER = { lat: 22.5726, lng: 88.3639 };
+const DEFAULT_CENTER = { lat: 13.0827, lng: 80.2707 };
 
 function NewReport() {
   const navigate = useNavigate();

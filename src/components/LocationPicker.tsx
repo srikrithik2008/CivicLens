@@ -19,7 +19,7 @@ export default function LocationPicker({ value, onChange, center }: Props) {
 
   useEffect(() => {
     if (!elRef.current || mapRef.current) return;
-    const map = L.map(elRef.current).setView([center.lat, center.lng], 14);
+    const map = L.map(elRef.current).setView([center.lat, center.lng], 12);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
       maxZoom: 19,
@@ -34,8 +34,10 @@ export default function LocationPicker({ value, onChange, center }: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const firstCenter = useRef(true);
   useEffect(() => {
-    mapRef.current?.setView([center.lat, center.lng], 15);
+    if (firstCenter.current) { firstCenter.current = false; return; }
+    mapRef.current?.setView([center.lat, center.lng], 16);
   }, [center.lat, center.lng]);
 
   useEffect(() => {
