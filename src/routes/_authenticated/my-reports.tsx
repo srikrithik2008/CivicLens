@@ -6,6 +6,9 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { UpvoteButton } from "@/components/UpvoteButton";
 import { myReportsQuery } from "@/lib/report-data";
 import { CATEGORIES } from "@/lib/reports";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import { StatusTimeline } from "@/components/StatusTimeline";
 
 export const Route = createFileRoute("/_authenticated/my-reports")({
   head: () => ({
@@ -27,6 +30,7 @@ export const Route = createFileRoute("/_authenticated/my-reports")({
 function MyReports() {
   const { user } = Route.useRouteContext();
   const { data } = useSuspenseQuery(myReportsQuery(user.id));
+  const [open, setOpen] = useState<string | null>(null);
   return (
     <div className="min-h-screen">
       <SiteHeader />
@@ -52,6 +56,11 @@ function MyReports() {
                   <Link to="/reports/$id" params={{ id: r.id }} className="block font-semibold hover:underline">{r.title}</Link>
                   <p className="text-sm text-muted-foreground">{CATEGORIES.find((c) => c.value === r.category)?.label}</p>
                   <UpvoteButton reportId={r.id} count={r.upvote_count} />
+                  <button type="button" onClick={() => setOpen(open === r.id ? null : r.id)} aria-expanded={open === r.id} className="flex items-center gap-1 text-sm font-medium text-primary">
+                    <ChevronDown className={`h-4 w-4 transition-transform ${open === r.id ? "rotate-180" : ""}`} />
+                    {open === r.id ? "Hide status history" : "Show status history"}
+                  </button>
+                  {open === r.id && <div className="pt-2"><StatusTimeline reportId={r.id} createdAt={r.created_at} /></div>}
                 </div>
               </li>
             ))}
