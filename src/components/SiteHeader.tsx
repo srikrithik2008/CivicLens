@@ -22,9 +22,15 @@ export function SiteHeader() {
           </span>
           FixMyCity
         </Link>
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center gap-1 sm:gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/map">Map</Link>
+          </Button>
           {ready && user ? (
             <>
+              <Button asChild variant="ghost" size="sm">
+                <Link to="/my-reports">My Reports</Link>
+              </Button>
               <Button asChild size="sm" className="hidden sm:inline-flex">
                 <Link to="/report/new">Report an issue</Link>
               </Button>

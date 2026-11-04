@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as AuthenticatedMyReportsRouteImport } from './routes/_authenticated/my-reports'
+import { Route as ReportsIdRouteImport } from './routes/reports.$id'
 import { Route as AuthenticatedReportNewRouteImport } from './routes/_authenticated/report.new'
 
 const IndexRoute = IndexRouteImport.update({
@@ -28,6 +31,21 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedMyReportsRoute = AuthenticatedMyReportsRouteImport.update({
+  id: '/my-reports',
+  path: '/my-reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ReportsIdRoute = ReportsIdRouteImport.update({
+  id: '/reports/$id',
+  path: '/reports/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedReportNewRoute = AuthenticatedReportNewRouteImport.update({
   id: '/report/new',
   path: '/report/new',
@@ -37,11 +55,17 @@ const AuthenticatedReportNewRoute = AuthenticatedReportNewRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/map': typeof MapRoute
+  '/my-reports': typeof AuthenticatedMyReportsRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/report/new': typeof AuthenticatedReportNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/map': typeof MapRoute
+  '/my-reports': typeof AuthenticatedMyReportsRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/report/new': typeof AuthenticatedReportNewRoute
 }
 export interface FileRoutesById {
@@ -49,18 +73,25 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/map': typeof MapRoute
+  '/_authenticated/my-reports': typeof AuthenticatedMyReportsRoute
+  '/reports/$id': typeof ReportsIdRoute
   '/_authenticated/report/new': typeof AuthenticatedReportNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/report/new'
+  fullPaths:
+    '/' | '/auth' | '/map' | '/my-reports' | '/reports/$id' | '/report/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/report/new'
+  to: '/' | '/auth' | '/map' | '/my-reports' | '/reports/$id' | '/report/new'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/map'
+    | '/_authenticated/my-reports'
+    | '/reports/$id'
     | '/_authenticated/report/new'
   fileRoutesById: FileRoutesById
 }
@@ -68,6 +99,8 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  MapRoute: typeof MapRoute
+  ReportsIdRoute: typeof ReportsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -93,6 +126,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/my-reports': {
+      id: '/_authenticated/my-reports'
+      path: '/my-reports'
+      fullPath: '/my-reports'
+      preLoaderRoute: typeof AuthenticatedMyReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/reports/$id': {
+      id: '/reports/$id'
+      path: '/reports/$id'
+      fullPath: '/reports/$id'
+      preLoaderRoute: typeof ReportsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/report/new': {
       id: '/_authenticated/report/new'
       path: '/report/new'
@@ -104,10 +158,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMyReportsRoute: typeof AuthenticatedMyReportsRoute
   AuthenticatedReportNewRoute: typeof AuthenticatedReportNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedMyReportsRoute: AuthenticatedMyReportsRoute,
   AuthenticatedReportNewRoute: AuthenticatedReportNewRoute,
 }
 
@@ -118,6 +174,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  MapRoute: MapRoute,
+  ReportsIdRoute: ReportsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
