@@ -63,3 +63,19 @@ export const myUpvoteQuery = (reportId: string, userId: string | undefined) =>
       return !!data;
     },
   });
+
+export type StatusUpdate = Database["public"]["Tables"]["status_updates"]["Row"];
+
+export const statusHistoryQuery = (reportId: string) =>
+  queryOptions({
+    queryKey: ["reports", "history", reportId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("status_updates")
+        .select("*")
+        .eq("report_id", reportId)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
