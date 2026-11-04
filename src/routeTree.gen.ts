@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedMyReportsRouteImport } from './routes/_authenticated/my-reports'
 import { Route as ReportsIdRouteImport } from './routes/reports.$id'
 import { Route as AuthenticatedReportNewRouteImport } from './routes/_authenticated/report.new'
@@ -36,6 +37,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMyReportsRoute = AuthenticatedMyReportsRouteImport.update({
   id: '/my-reports',
   path: '/my-reports',
@@ -56,6 +62,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/map': typeof MapRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/my-reports': typeof AuthenticatedMyReportsRoute
   '/reports/$id': typeof ReportsIdRoute
   '/report/new': typeof AuthenticatedReportNewRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/map': typeof MapRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/my-reports': typeof AuthenticatedMyReportsRoute
   '/reports/$id': typeof ReportsIdRoute
   '/report/new': typeof AuthenticatedReportNewRoute
@@ -74,6 +82,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/map': typeof MapRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/my-reports': typeof AuthenticatedMyReportsRoute
   '/reports/$id': typeof ReportsIdRoute
   '/_authenticated/report/new': typeof AuthenticatedReportNewRoute
@@ -81,15 +90,29 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/map' | '/my-reports' | '/reports/$id' | '/report/new'
+    | '/'
+    | '/auth'
+    | '/map'
+    | '/admin'
+    | '/my-reports'
+    | '/reports/$id'
+    | '/report/new'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/map' | '/my-reports' | '/reports/$id' | '/report/new'
+  to:
+    | '/'
+    | '/auth'
+    | '/map'
+    | '/admin'
+    | '/my-reports'
+    | '/reports/$id'
+    | '/report/new'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/map'
+    | '/_authenticated/admin'
     | '/_authenticated/my-reports'
     | '/reports/$id'
     | '/_authenticated/report/new'
@@ -133,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/my-reports': {
       id: '/_authenticated/my-reports'
       path: '/my-reports'
@@ -158,11 +188,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedMyReportsRoute: typeof AuthenticatedMyReportsRoute
   AuthenticatedReportNewRoute: typeof AuthenticatedReportNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedMyReportsRoute: AuthenticatedMyReportsRoute,
   AuthenticatedReportNewRoute: AuthenticatedReportNewRoute,
 }
