@@ -131,3 +131,9 @@
   border: 3px solid var(--card);
   box-shadow: var(--shadow-glow-value);
 }
+.fmc-pin--reported { background: var(--status-reported); }
+.fmc-pin--in_progress { background: var(--status-progress); }
+.fmc-pin--resolved { background: var(--status-resolved); }
+.fmc-popup { display: grid; gap: 4px; font-family: var(--font-sans); }
+.fmc-popup img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+.fmc-popup a { color: var(--primary); font-weight: 600; }
