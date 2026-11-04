@@ -5,6 +5,8 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { UpvoteButton } from "@/components/UpvoteButton";
 import { reportQuery } from "@/lib/report-data";
 import { CATEGORIES } from "@/lib/reports";
+import { StatusTimeline } from "@/components/StatusTimeline";
+import MiniMap from "@/components/MiniMap";
 
 export const Route = createFileRoute("/reports/$id")({
   ssr: false,
@@ -49,6 +51,14 @@ function ReportDetail() {
             {r.address && <p className="text-sm text-muted-foreground">{r.address}</p>}
             <p className="text-xs text-muted-foreground">Reported {new Date(r.created_at).toLocaleDateString()}</p>
             <UpvoteButton reportId={r.id} count={r.upvote_count} />
+            <section className="space-y-2">
+              <h2 className="text-lg font-semibold">Location</h2>
+              <MiniMap lat={r.latitude} lng={r.longitude} status={r.status} />
+            </section>
+            <section className="space-y-3">
+              <h2 className="text-lg font-semibold">Status history</h2>
+              <StatusTimeline reportId={r.id} createdAt={r.created_at} />
+            </section>
           </div>
         </article>
       </main>
