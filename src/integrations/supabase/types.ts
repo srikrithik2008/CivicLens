@@ -171,6 +171,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_report_status: {
+        Args: {
+          comment?: string
+          new_status: Database["public"]["Enums"]["report_status"]
+          report_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
