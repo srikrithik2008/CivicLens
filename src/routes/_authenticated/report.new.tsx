@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { lazy, Suspense, useEffect, useState, type FormEvent } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { SiteHeader } from "@/components/SiteHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, MAX_PHOTO_BYTES, reportSchema, type Category } from "@/lib/reports";
+import { uploadReportPhoto } from "@/lib/photos.functions";
 
 const LocationPicker = lazy(() => import("@/components/LocationPicker"));
 
@@ -31,6 +33,7 @@ const DEFAULT_CENTER = { lat: 13.0827, lng: 80.2707 };
 
 function NewReport() {
   const navigate = useNavigate();
+  const uploadPhoto = useServerFn(uploadReportPhoto);
   const { user } = Route.useRouteContext();
   const [category, setCategory] = useState<Category | "">("");
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(null);
@@ -93,10 +96,9 @@ function NewReport() {
 
     setSubmitting(true);
     try {
-      const ext = photo.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-      const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("report-photos").upload(path, photo, { contentType: photo.type });
-      if (upErr) throw upErr;
+      const photoForm = new FormData();
+      photoForm.append("photo", photo);
+      const { path } = await uploadPhoto({ data: photoForm });
       const { error } = await supabase.from("reports").insert({ ...parsed.data, address: parsed.data.address ?? null, user_id: user.id, photo_url: path });
       if (error) {
         await supabase.storage.from("report-photos").remove([path]);
@@ -162,7 +164,7 @@ function NewReport() {
               <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed bg-muted/50 px-4 py-10 text-center hover:bg-accent">
                 <Camera className="h-7 w-7 text-primary" />
                 <span className="text-sm font-medium">Tap to take or upload a photo</span>
-                <span className="text-xs text-muted-foreground">JPG or PNG, up to 5 MB</span>
+                <span className="text-xs text-muted-foreground">JPG, PNG or WebP, up to 5 MB</span>
                 <input type="file" accept="image/*" capture="environment" className="sr-only" onChange={(e) => onPhoto(e.target.files?.[0])} />
               </label>
             )}
