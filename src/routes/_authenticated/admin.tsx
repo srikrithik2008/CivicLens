@@ -77,21 +77,17 @@ function AdminPage() {
 
 function Row({ r }: { r: Report }) {
   const qc = useQueryClient();
-  const { user } = Route.useRouteContext();
   const [next, setNext] = useState<ReportStatus>(r.status);
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function save() {
     setBusy(true);
-    const { error } = await supabase.from("reports").update({ status: next }).eq("id", r.id);
-    if (!error) {
-      const { error: e2 } = await supabase.from("status_updates").insert({
-        report_id: r.id, admin_id: user.id, status: next, comment: comment.trim().slice(0, 1000) || null,
-      });
-      if (e2) toast.error(e2.message);
-      else { toast.success("Status updated"); setComment(""); }
-    } else toast.error(error.message);
+    const { error } = await supabase.rpc("update_report_status", {
+      report_id: r.id, new_status: next, comment: comment,
+    });
+    if (error) toast.error(error.message);
+    else { toast.success("Status updated"); setComment(""); }
     setBusy(false);
     qc.invalidateQueries({ queryKey: ["reports"] });
     qc.invalidateQueries({ queryKey: ["status_updates", r.id] });

@@ -11,3 +11,4 @@
 
 - Report photos live in the private `report-photos` bucket under `<user_id>/...`; store the object path in `reports.photo_url` and show photos via signed URLs (workspace blocks public buckets).
 - Admin rights come only from `public.user_roles` via `has_role()`; upvote totals are kept in `reports.upvote_count` by a trigger on `upvotes`.
+- Admin status changes go through the `update_report_status` RPC (status + history row in one transaction, admin-checked); don't write `reports.status` and `status_updates` separately. Photo uploads are limited to jpg/jpeg/png/webp/heic by the storage insert policy (file extension), since bucket MIME settings can't be changed from here.

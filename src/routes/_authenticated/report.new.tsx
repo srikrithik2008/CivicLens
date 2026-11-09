@@ -98,7 +98,10 @@ function NewReport() {
       const { error: upErr } = await supabase.storage.from("report-photos").upload(path, photo, { contentType: photo.type });
       if (upErr) throw upErr;
       const { error } = await supabase.from("reports").insert({ ...parsed.data, address: parsed.data.address ?? null, user_id: user.id, photo_url: path });
-      if (error) throw error;
+      if (error) {
+        await supabase.storage.from("report-photos").remove([path]);
+        throw error;
+      }
       toast.success("Thanks! Your report has been submitted.");
       navigate({ to: "/" });
     } catch (err) {
