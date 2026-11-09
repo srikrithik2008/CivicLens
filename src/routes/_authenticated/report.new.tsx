@@ -105,7 +105,8 @@ function NewReport() {
       toast.success("Thanks! Your report has been submitted.");
       navigate({ to: "/" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      const message = err && typeof err === "object" && "message" in err && typeof err.message === "string" ? err.message : "";
+      toast.error(message || "Something went wrong");
     } finally {
       setSubmitting(false);
     }

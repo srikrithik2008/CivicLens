@@ -29,6 +29,13 @@
       "when": 1794243958230,
       "tag": "0003_update_report_status_and_photo_types",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794244839146,
+      "tag": "0004_daily_report_limit",
+      "breakpoints": true
     }
   ]
 }
